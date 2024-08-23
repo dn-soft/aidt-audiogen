@@ -26,11 +26,11 @@ const duration = 0.6;
  * @type {["kim:3", "kim:4", "lee:3", "lee:4", "ham:3", "ham:4"]} 오디오 병합할 저자:학년 리스트
  */
 const list = ["kim:3"];
-
 /**
  * @description fuction: 해당 경로에 폴더가 있는지 검사
  * @param {string} filePath 폴더 경로
  */
+
 const ensureDirectoryExistence = (filePath) => {
   if (fs.existsSync(filePath)) {
     return true;
@@ -106,7 +106,9 @@ const copyAndRenameFile = (source, destination) => {
  * @description fuction: 임시 생성한 공백 오디오 파일 제거
  */
 const cleanUpSilenceFile = async () => {
-  const silenceFiles = fs.readdirSync(destDir).filter((file) => file.startsWith("silence_"));
+  const silenceFiles = fs
+    .readdirSync(destDir)
+    .filter((file) => file.startsWith("silence_"));
   const tasks = silenceFiles.map((file) => {
     return new Promise((resolve, reject) => {
       const filePath = path.join(destDir, file);
@@ -149,7 +151,9 @@ const generateAudioFolder = async (writer, grade, group) => {
         const id = quizSource[0];
         const audioArr = quizSource[1];
         const quizeType = id.split("-")[0].slice(4);
-        const mediaBasePath = `${destDir}\\${writer}\\${grade}\\${Number(chapter)}\\${id}\\media`;
+        const mediaBasePath = `${destDir}\\${writer}\\${grade}\\${Number(
+          chapter
+        )}\\${id}\\media`;
 
         ensureDirectoryExistence(mediaBasePath);
 
@@ -157,6 +161,11 @@ const generateAudioFolder = async (writer, grade, group) => {
           const audioType = audioSource[0];
           const audioFileList = audioSource[1];
 
+          /**
+           * q === 문제음원
+           * c === 선택지 음원
+           * a === 정답음원
+           */
           if (audioType === "q") {
             const mediaSavePath = `${mediaBasePath}\\${audioType}1.mp3`;
 
@@ -206,19 +215,33 @@ const generateAudioFolder = async (writer, grade, group) => {
                       const mp3OriginFilePath3 = `${basePath}\\${writer}\\g${grade}_voice\\${quizeType}\\${thirdAudio}.mp3`;
                       const mp3OriginFilePath4 = `${basePath}\\${writer}\\g${grade}_voice\\${quizeType}\\${forthAudio}.mp3`;
 
-                      concatenateMP3Files([mp3OriginFilePath1, silenceFilePath, mp3OriginFilePath2, silenceFilePath, mp3OriginFilePath3, silenceFilePath, mp3OriginFilePath4], mediaSavePath, (err) => {
-                        if (err) {
-                          console.error("Failed to concatenate files:", err);
-                          reject(err);
-                        } else {
-                          resolve();
+                      concatenateMP3Files(
+                        [
+                          mp3OriginFilePath1,
+                          silenceFilePath,
+                          mp3OriginFilePath2,
+                          silenceFilePath,
+                          mp3OriginFilePath3,
+                          silenceFilePath,
+                          mp3OriginFilePath4,
+                        ],
+                        mediaSavePath,
+                        (err) => {
+                          if (err) {
+                            console.error("Failed to concatenate files:", err);
+                            reject(err);
+                          } else {
+                            resolve();
+                          }
                         }
-                      });
+                      );
                     });
                   })
                 );
               } else {
-                console.log(`${id} media ${audioType} ABCD Type conflict: aNum = ${aNum}, bNum = ${bNum}, cNum = ${cNum}, dNum = ${dNum}, file: ${audioFileList}`);
+                console.log(
+                  `${id} media ${audioType} ABCD Type conflict: aNum = ${aNum}, bNum = ${bNum}, cNum = ${cNum}, dNum = ${dNum}, file: ${audioFileList}`
+                );
               }
             } else if (audioFileList.length === 3) {
               let aNum = 0;
@@ -260,19 +283,31 @@ const generateAudioFolder = async (writer, grade, group) => {
                       const mp3OriginFilePath2 = `${basePath}\\${writer}\\g${grade}_voice\\${quizeType}\\${secondAudio}.mp3`;
                       const mp3OriginFilePath3 = `${basePath}\\${writer}\\g${grade}_voice\\${quizeType}\\${thirdAudio}.mp3`;
 
-                      concatenateMP3Files([mp3OriginFilePath1, silenceFilePath, mp3OriginFilePath2, silenceFilePath, mp3OriginFilePath3], mediaSavePath, (err) => {
-                        if (err) {
-                          console.error("Failed to concatenate files:", err);
-                          reject(err);
-                        } else {
-                          resolve();
+                      concatenateMP3Files(
+                        [
+                          mp3OriginFilePath1,
+                          silenceFilePath,
+                          mp3OriginFilePath2,
+                          silenceFilePath,
+                          mp3OriginFilePath3,
+                        ],
+                        mediaSavePath,
+                        (err) => {
+                          if (err) {
+                            console.error("Failed to concatenate files:", err);
+                            reject(err);
+                          } else {
+                            resolve();
+                          }
                         }
-                      });
+                      );
                     });
                   })
                 );
               } else {
-                console.log(`${id} media ${audioType} ABC Type conflict: aNum = ${aNum}, bNum = ${bNum}, cNum = ${cNum}, file: ${audioFileList}`);
+                console.log(
+                  `${id} media ${audioType} ABC Type conflict: aNum = ${aNum}, bNum = ${bNum}, cNum = ${cNum}, file: ${audioFileList}`
+                );
               }
             } else if (audioFileList.length === 2) {
               let aNum = 0;
@@ -308,19 +343,29 @@ const generateAudioFolder = async (writer, grade, group) => {
                       const mp3OriginFilePath1 = `${basePath}\\${writer}\\g${grade}_voice\\${quizeType}\\${firstAudio}.mp3`;
                       const mp3OriginFilePath2 = `${basePath}\\${writer}\\g${grade}_voice\\${quizeType}\\${secondAudio}.mp3`;
 
-                      concatenateMP3Files([mp3OriginFilePath1, silenceFilePath, mp3OriginFilePath2], mediaSavePath, (err) => {
-                        if (err) {
-                          console.error("Failed to concatenate files:", err);
-                          reject(err);
-                        } else {
-                          resolve();
+                      concatenateMP3Files(
+                        [
+                          mp3OriginFilePath1,
+                          silenceFilePath,
+                          mp3OriginFilePath2,
+                        ],
+                        mediaSavePath,
+                        (err) => {
+                          if (err) {
+                            console.error("Failed to concatenate files:", err);
+                            reject(err);
+                          } else {
+                            resolve();
+                          }
                         }
-                      });
+                      );
                     });
                   })
                 );
               } else {
-                console.log(`${id} media ${audioType} length conflict: aNum = ${aNum}, bNum = ${bNum}`);
+                console.log(
+                  `${id} media ${audioType} length conflict: aNum = ${aNum}, bNum = ${bNum}`
+                );
               }
             } else if (audioFileList.length === 1) {
               const mp3OriginFilePath = `${basePath}\\${writer}\\g${grade}_voice\\${quizeType}\\${audioFileList[0]}.mp3`;
@@ -403,7 +448,9 @@ const generateAudioFolder = async (writer, grade, group) => {
                 }
               });
 
-              const mediaSavePath = `${mediaBasePath}\\${audioType}${Number(choiceNum)}.mp3`;
+              const mediaSavePath = `${mediaBasePath}\\${audioType}${Number(
+                choiceNum
+              )}.mp3`;
 
               if (Afile && Bfile && Cfile && Dfile) {
                 mediaPaths.push(mediaSavePath);
@@ -420,14 +467,26 @@ const generateAudioFolder = async (writer, grade, group) => {
                       const mp3OriginFilePath3 = `${basePath}\\${writer}\\g${grade}_voice\\${quizeType}\\${Cfile}.mp3`;
                       const mp3OriginFilePath4 = `${basePath}\\${writer}\\g${grade}_voice\\${quizeType}\\${Dfile}.mp3`;
 
-                      concatenateMP3Files([mp3OriginFilePath1, silenceFilePath, mp3OriginFilePath2, silenceFilePath, mp3OriginFilePath3, silenceFilePath, mp3OriginFilePath4], mediaSavePath, (err) => {
-                        if (err) {
-                          console.error("Failed to concatenate files:", err);
-                          reject(err);
-                        } else {
-                          resolve();
+                      concatenateMP3Files(
+                        [
+                          mp3OriginFilePath1,
+                          silenceFilePath,
+                          mp3OriginFilePath2,
+                          silenceFilePath,
+                          mp3OriginFilePath3,
+                          silenceFilePath,
+                          mp3OriginFilePath4,
+                        ],
+                        mediaSavePath,
+                        (err) => {
+                          if (err) {
+                            console.error("Failed to concatenate files:", err);
+                            reject(err);
+                          } else {
+                            resolve();
+                          }
                         }
-                      });
+                      );
                     });
                   })
                 );
@@ -445,20 +504,30 @@ const generateAudioFolder = async (writer, grade, group) => {
                       const mp3OriginFilePath2 = `${basePath}\\${writer}\\g${grade}_voice\\${quizeType}\\${Bfile}.mp3`;
                       const mp3OriginFilePath3 = `${basePath}\\${writer}\\g${grade}_voice\\${quizeType}\\${Cfile}.mp3`;
 
-                      concatenateMP3Files([mp3OriginFilePath1, silenceFilePath, mp3OriginFilePath2, silenceFilePath, mp3OriginFilePath3], mediaSavePath, (err) => {
-                        if (err) {
-                          console.error("Failed to concatenate files:", err);
-                          reject(err);
-                        } else {
-                          resolve();
+                      concatenateMP3Files(
+                        [
+                          mp3OriginFilePath1,
+                          silenceFilePath,
+                          mp3OriginFilePath2,
+                          silenceFilePath,
+                          mp3OriginFilePath3,
+                        ],
+                        mediaSavePath,
+                        (err) => {
+                          if (err) {
+                            console.error("Failed to concatenate files:", err);
+                            reject(err);
+                          } else {
+                            resolve();
+                          }
                         }
-                      });
+                      );
                     });
                   })
                 );
               } else if (!Afile && Bfile && Cfile) {
                 if (!mergeBaseFile) {
-                  console.log("Error: No Base file");
+                  console.log(`Error: No Base file: ${id}`);
                   return;
                 }
 
@@ -475,20 +544,30 @@ const generateAudioFolder = async (writer, grade, group) => {
                       const mp3OriginFilePath2 = `${basePath}\\${writer}\\g${grade}_voice\\${quizeType}\\${Bfile}.mp3`;
                       const mp3OriginFilePath3 = `${basePath}\\${writer}\\g${grade}_voice\\${quizeType}\\${Cfile}.mp3`;
 
-                      concatenateMP3Files([mp3OriginFilePath1, silenceFilePath, mp3OriginFilePath2, silenceFilePath, mp3OriginFilePath3], mediaSavePath, (err) => {
-                        if (err) {
-                          console.error("Failed to concatenate files:", err);
-                          reject(err);
-                        } else {
-                          resolve();
+                      concatenateMP3Files(
+                        [
+                          mp3OriginFilePath1,
+                          silenceFilePath,
+                          mp3OriginFilePath2,
+                          silenceFilePath,
+                          mp3OriginFilePath3,
+                        ],
+                        mediaSavePath,
+                        (err) => {
+                          if (err) {
+                            console.error("Failed to concatenate files:", err);
+                            reject(err);
+                          } else {
+                            resolve();
+                          }
                         }
-                      });
+                      );
                     });
                   })
                 );
               } else if (!Afile && Bfile && !Cfile) {
                 if (!mergeBaseFile) {
-                  console.log("Error: No Base file");
+                  console.log(`Error: No Base file: ${id}`);
                   return;
                 }
 
@@ -504,14 +583,22 @@ const generateAudioFolder = async (writer, grade, group) => {
                       const mp3OriginFilePath1 = `${basePath}\\${writer}\\g${grade}_voice\\${quizeType}\\${mergeBaseFile}.mp3`;
                       const mp3OriginFilePath2 = `${basePath}\\${writer}\\g${grade}_voice\\${quizeType}\\${Bfile}.mp3`;
 
-                      concatenateMP3Files([mp3OriginFilePath1, silenceFilePath, mp3OriginFilePath2], mediaSavePath, (err) => {
-                        if (err) {
-                          console.error("Failed to concatenate files:", err);
-                          reject(err);
-                        } else {
-                          resolve();
+                      concatenateMP3Files(
+                        [
+                          mp3OriginFilePath1,
+                          silenceFilePath,
+                          mp3OriginFilePath2,
+                        ],
+                        mediaSavePath,
+                        (err) => {
+                          if (err) {
+                            console.error("Failed to concatenate files:", err);
+                            reject(err);
+                          } else {
+                            resolve();
+                          }
                         }
-                      });
+                      );
                     });
                   })
                 );
@@ -528,14 +615,22 @@ const generateAudioFolder = async (writer, grade, group) => {
                       const mp3OriginFilePath1 = `${basePath}\\${writer}\\g${grade}_voice\\${quizeType}\\${Afile}.mp3`;
                       const mp3OriginFilePath2 = `${basePath}\\${writer}\\g${grade}_voice\\${quizeType}\\${Bfile}.mp3`;
 
-                      concatenateMP3Files([mp3OriginFilePath1, silenceFilePath, mp3OriginFilePath2], mediaSavePath, (err) => {
-                        if (err) {
-                          console.error("Failed to concatenate files:", err);
-                          reject(err);
-                        } else {
-                          resolve();
+                      concatenateMP3Files(
+                        [
+                          mp3OriginFilePath1,
+                          silenceFilePath,
+                          mp3OriginFilePath2,
+                        ],
+                        mediaSavePath,
+                        (err) => {
+                          if (err) {
+                            console.error("Failed to concatenate files:", err);
+                            reject(err);
+                          } else {
+                            resolve();
+                          }
                         }
-                      });
+                      );
                     });
                   })
                 );
@@ -552,8 +647,71 @@ const generateAudioFolder = async (writer, grade, group) => {
                 return;
               }
             });
+          } else if (audioType === "a") {
+            const mediaSavePath = `${mediaBasePath}\\${audioType}.mp3`;
+            let aNum = 0;
+            let bNum = 0;
+            let firstAudio;
+            let secondAudio;
+
+            audioFileList.map((file) => {
+              const abs = file.split("_")[2];
+
+              if (abs === "A") {
+                firstAudio = file;
+                aNum += 1;
+              } else if (abs === "B") {
+                secondAudio = file;
+                bNum += 1;
+              } else {
+                console.log(`${id} media ${file} ABC Type conflict`);
+              }
+            });
+
+            if (audioFileList.length > 2) {
+              console.log(`${id} Answer media ${audioFileList} over 2`);
+            } else if (audioFileList.length === 2) {
+              mediaPaths.push(mediaSavePath);
+              tasks.push(
+                new Promise((resolve, reject) => {
+                  createSilence(duration, (err, silenceFilePath) => {
+                    if (err) {
+                      console.error("Failed to create silence file:", err);
+                      reject(err);
+                      return;
+                    }
+
+                    const mp3OriginFilePath1 = `${basePath}\\${writer}\\g${grade}_voice\\${quizeType}\\${firstAudio}.mp3`;
+                    const mp3OriginFilePath2 = `${basePath}\\${writer}\\g${grade}_voice\\${quizeType}\\${secondAudio}.mp3`;
+
+                    concatenateMP3Files(
+                      [mp3OriginFilePath1, silenceFilePath, mp3OriginFilePath2],
+                      mediaSavePath,
+                      (err) => {
+                        if (err) {
+                          console.error("Failed to concatenate files:", err);
+                          reject(err);
+                        } else {
+                          resolve();
+                        }
+                      }
+                    );
+                  });
+                })
+              );
+            } else {
+              const mp3OriginFilePath = `${basePath}\\${writer}\\g${grade}_voice\\${quizeType}\\${audioFileList[0]}.mp3`;
+              tasks.push(
+                new Promise((resolve) => {
+                  copyAndRenameFile(mp3OriginFilePath, mediaSavePath);
+                  resolve();
+                })
+              );
+            }
           } else {
-            console.log(`Error: no media Type Data: ${audioSource[0]}, ${audioSource[1]}`);
+            console.log(
+              `Error: no media Type Data: ${audioSource[0]}, ${audioSource[1]}`
+            );
           }
         });
       });
@@ -575,10 +733,20 @@ const generateAudioFolder = async (writer, grade, group) => {
  * @param {"lee" | "kim" | "ham"} writer 저자
  * @param {3 | 4} grade 학년
  */
+/**
+ * @description fuction: Exel import 및 분류
+ * @param {"lee" | "kim" | "ham"} writer 저자
+ * @param {3 | 4} grade 학년
+ */
 const importExel = async (writer, grade) => {
   const startTime = new Date();
-  console.log(`Start Time: ${startTime.toLocaleTimeString("en-US", { hour12: false })}`);
-  const filePath = path.join(basePath, `${writer}\\g${grade}_voice\\voice.xlsx`); // Exel 리소스 경로
+  console.log(
+    `Start Time: ${startTime.toLocaleTimeString("en-US", { hour12: false })}`
+  );
+  const filePath = path.join(
+    basePath,
+    `${writer}\\g${grade}_voice\\voice.xlsx`
+  ); // Exel 리소스 경로
   const workbook = readFile(filePath);
   const sheet = workbook.Sheets["Sheet1"];
   const range = decode_range(sheet["!ref"]);
@@ -613,8 +781,9 @@ const importExel = async (writer, grade) => {
    *      [grade: 3 | 4]: {
    *        [chapter: number]: {
    *          [id: string]: {
-   *            q?: <string>[]  // 문제 filename insert
-   *            c?: <string>[]  // 선택지 filename insert
+   *            q?: <string>[]  // 문제음원 filename insert
+   *            c?: <string>[]  // 선택지음원 filename insert
+   *            a?: <string>[]  // 정답음원 filename insert
    *          }
    *        }
    *      }
@@ -632,13 +801,47 @@ const importExel = async (writer, grade) => {
       const grade = id[1];
       const chapter = Number(id.slice(2, 4));
 
-      if (Number(audioType) > 4) {
+      //  Number(audioType) === 9 => 정답음원
+      //  Number(audioType) > 4 => 불필요한 음원
+      if (
+        Number(audioType) === 9 &&
+        (id?.includes("S") || id?.includes("A2") || id?.includes("P3"))
+      ) {
+        if (group[writer][grade]?.[chapter]?.[id]) {
+          group[writer][grade][chapter][id].a = group[writer][grade]?.[
+            chapter
+          ]?.[id].a
+            ? [...group[writer][grade]?.[chapter]?.[id].a, fileName]
+            : [fileName];
+        } else if (group[writer][grade]?.[chapter]) {
+          group[writer][grade][chapter] = {
+            ...group[writer][grade][chapter],
+            [id]: {
+              a: [fileName],
+            },
+          };
+        } else {
+          group[writer][grade][chapter] = {
+            [id]: {
+              a: [fileName],
+            },
+          };
+        }
+      } else if (Number(audioType) > 4) {
         return;
       } else if (group[writer][grade]?.[chapter]?.[id]) {
         if (audioType == "00") {
-          group[writer][grade][chapter][id].q = group[writer][grade]?.[chapter]?.[id].q ? [...group[writer][grade]?.[chapter]?.[id].q, fileName] : [fileName];
+          group[writer][grade][chapter][id].q = group[writer][grade]?.[
+            chapter
+          ]?.[id].q
+            ? [...group[writer][grade]?.[chapter]?.[id].q, fileName]
+            : [fileName];
         } else {
-          group[writer][grade][chapter][id].c = group[writer][grade]?.[chapter]?.[id].c ? [...group[writer][grade]?.[chapter]?.[id].c, fileName] : [fileName];
+          group[writer][grade][chapter][id].c = group[writer][grade]?.[
+            chapter
+          ]?.[id].c
+            ? [...group[writer][grade]?.[chapter]?.[id].c, fileName]
+            : [fileName];
         }
       } else if (group[writer][grade]?.[chapter]) {
         group[writer][grade][chapter] = {
@@ -669,6 +872,29 @@ const importExel = async (writer, grade) => {
     }
   });
 
+  Object.entries(group?.[writer]?.[grade]).map((data) => {
+    const chpData = data[1];
+
+    Object.entries(chpData).map((chpD) => {
+      const id = chpD[0];
+      const keys = Object.keys(chpD[1]);
+
+      if (id.includes("S") || id.includes("A2") || id.includes("P3")) {
+        if (!keys.includes("a")) console.log(`${id}: no Answer MP3`);
+      }
+    });
+  });
+
+  //  생성파일 리스트
+  const jsonData = JSON.stringify(group);
+  fs.writeFile("output.json", jsonData, (err) => {
+    if (err) {
+      console.error("Error writing file:", err);
+    } else {
+      console.log("JSON file has been saved.");
+    }
+  });
+
   try {
     await generateAudioFolder(writer, grade, group);
     await cleanUpSilenceFile();
@@ -677,7 +903,9 @@ const importExel = async (writer, grade) => {
     const totalTime = new Date(endTime - startTime).toISOString().slice(11, 19);
 
     console.log("Complete");
-    console.log(`Complete Time: ${endTime.toLocaleTimeString("en-US", { hour12: false })}`);
+    console.log(
+      `Complete Time: ${endTime.toLocaleTimeString("en-US", { hour12: false })}`
+    );
     console.log(`Total Time: ${totalTime}`);
   } catch (err) {
     await cleanUpSilenceFile();
@@ -685,7 +913,9 @@ const importExel = async (writer, grade) => {
     const endTime = new Date();
     const totalTime = new Date(endTime - startTime).toISOString().slice(11, 19);
 
-    console.log(`Error Time: ${endTime.toLocaleTimeString("en-US", { hour12: false })}`);
+    console.log(
+      `Error Time: ${endTime.toLocaleTimeString("en-US", { hour12: false })}`
+    );
     console.log(`Total Time: ${totalTime}`);
     console.error("Error generating audio folder:", err);
   }
